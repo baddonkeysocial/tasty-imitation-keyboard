@@ -20,7 +20,7 @@ let kPeriodShortcut = "kPeriodShortcut"
 let kKeyboardClicks = "kKeyboardClicks"
 let kSmallLowercase = "kSmallLowercase"
 
-class KeyboardViewController: UIInputViewController {
+open class KeyboardViewController: UIInputViewController {
     
     let backspaceDelay: TimeInterval = 0.5
     let backspaceRepeat: TimeInterval = 0.07
@@ -87,13 +87,8 @@ class KeyboardViewController: UIInputViewController {
             self.setHeight(newValue)
         }
     }
-    
-    // TODO: why does the app crash if this isn't here?
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
-    }
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         UserDefaults.standard.register(defaults: [
             kAutoCapitalization: true,
             kPeriodShortcut: true,
@@ -114,7 +109,7 @@ class KeyboardViewController: UIInputViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(KeyboardViewController.defaultsChanged(_:)), name: UserDefaults.didChangeNotification, object: nil)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("NSCoding not supported")
     }
     
@@ -203,7 +198,7 @@ class KeyboardViewController: UIInputViewController {
     }
     
     var lastLayoutBounds: CGRect?
-    override func viewDidLayoutSubviews() {
+    override open func viewDidLayoutSubviews() {
         if view.bounds == CGRect.zero {
             return
         }
@@ -231,7 +226,7 @@ class KeyboardViewController: UIInputViewController {
         self.forwardingView.frame.origin = newOrigin
     }
     
-    override func loadView() {
+    override open func loadView() {
         super.loadView()
         
         if let aBanner = self.createBanner() {
@@ -241,12 +236,12 @@ class KeyboardViewController: UIInputViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         self.bannerView?.isHidden = false
         self.keyboardHeight = self.height(withTopBanner: true)
     }
     
-    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+    override open func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
         self.forwardingView.resetTrackedViews()
         self.shiftStartingState = nil
         self.shiftWasMultitapped = false
@@ -261,7 +256,7 @@ class KeyboardViewController: UIInputViewController {
         self.keyboardHeight = self.height(withTopBanner: true)
     }
     
-    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+    override open func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         // optimization: ensures quick mode and shift transitions
         if let keyPool = self.layout?.keyPool {
             for view in keyPool {
@@ -426,13 +421,13 @@ class KeyboardViewController: UIInputViewController {
     // POPUP DELAY END //
     /////////////////////
     
-    override func didReceiveMemoryWarning() {
+    override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated
     }
 
     // TODO: this is currently not working as intended; only called when selection changed -- iOS bug
-    override func textDidChange(_ textInput: UITextInput?) {
+    override open func textDidChange(_ textInput: UITextInput?) {
         self.contextChanged()
     }
     
@@ -847,7 +842,7 @@ class KeyboardViewController: UIInputViewController {
     class var layoutConstants: LayoutConstants.Type { get { return LayoutConstants.self }}
     class var globalColors: GlobalColors.Type { get { return GlobalColors.self }}
     
-    func keyPressed(_ key: Key) {
+    open func keyPressed(_ key: Key) {
         self.textDocumentProxy.insertText(key.outputForCase(self.shiftState.uppercase()))
     }
     

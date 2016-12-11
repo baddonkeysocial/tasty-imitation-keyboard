@@ -55,7 +55,7 @@ class Page {
     }
 }
 
-class Key: Hashable {
+public class Key: Hashable {
     enum KeyType {
         case character
         case specialCharacter
@@ -119,7 +119,7 @@ class Key: Hashable {
     }
     
     // TODO: this is kind of a hack
-    var hashValue: Int
+    public var hashValue: Int
     
     init(_ type: KeyType) {
         self.type = type
@@ -163,6 +163,6 @@ class Key: Hashable {
     }
 }
 
-func ==(lhs: Key, rhs: Key) -> Bool {
+public func ==(lhs: Key, rhs: Key) -> Bool {
     return lhs.hashValue == rhs.hashValue
 }
