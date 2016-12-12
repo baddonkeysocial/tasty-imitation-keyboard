@@ -561,10 +561,7 @@ open class KeyboardViewController: UIInputViewController {
     
     func backspaceDown(_ sender: KeyboardKey) {
         self.cancelBackspaceTimers()
-        
-        self.textDocumentProxy.deleteBackward()
-        self.updateCapsIfNeeded()
-        
+        self.keyPressed(Key(.backspace))
         // trigger for subsequent deletes
         self.backspaceDelayTimer = Timer.scheduledTimer(timeInterval: backspaceDelay - backspaceRepeat, target: self, selector: #selector(KeyboardViewController.backspaceDelayCallback), userInfo: nil, repeats: false)
     }
@@ -580,9 +577,7 @@ open class KeyboardViewController: UIInputViewController {
     
     func backspaceRepeatCallback() {
         self.playKeySound()
-        
-        self.textDocumentProxy.deleteBackward()
-        self.updateCapsIfNeeded()
+        self.keyPressed(Key(.backspace))
     }
     
     func shiftDown(_ sender: KeyboardKey) {
@@ -843,7 +838,13 @@ open class KeyboardViewController: UIInputViewController {
     class var globalColors: GlobalColors.Type { get { return GlobalColors.self }}
     
     open func keyPressed(_ key: Key) {
-        self.textDocumentProxy.insertText(key.outputForCase(self.shiftState.uppercase()))
+        switch key.type {
+        case .backspace:
+            self.textDocumentProxy.deleteBackward()
+            self.updateCapsIfNeeded()
+        default:
+            self.textDocumentProxy.insertText(key.outputForCase(self.shiftState.uppercase()))
+        }
     }
     
     // a banner that sits in the empty space on top of the keyboard
